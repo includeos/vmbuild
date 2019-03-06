@@ -4,8 +4,8 @@
 #include <cstring>
 #include <cassert>
 #include <vector>
-#include "../api/util/elf_binary.hpp"
-#include "../api/util/crc32.hpp"
+#include "elf_binary.hpp"
+#include "crc32.hpp"
 #include <unistd.h>
 
 static char* elf_header_location;
@@ -126,16 +126,16 @@ static int relocate_pruned(char* new_location, SymTab& symtab, StrTab& strtab)
          hdr.strtab_size * sizeof(char);
 
   // checksum of symbols & strings and the entire section
-  hdr.checksum_syms = crc32_fast(symloc, hdr.symtab_entries * sizeof(ElfSym));
-  hdr.checksum_strs = crc32_fast(strloc, hdr.strtab_size);
-  uint32_t hdr_csum = crc32_fast(&hdr, sizeof(relocate_header) + size);
+  hdr.checksum_syms = crc32c(symloc, hdr.symtab_entries * sizeof(ElfSym));
+  hdr.checksum_strs = crc32c(strloc, hdr.strtab_size);
+  uint32_t hdr_csum = crc32c(&hdr, sizeof(relocate_header) + size);
   fprintf(stderr, "ELF symbols: %08x  "
                   "ELF strings: %08x  "
                   "ELF section: %08x\n",
                   hdr.checksum_syms, hdr.checksum_strs, hdr_csum);
   hdr.sanity_check = 0;
   // header consistency check
-  hdr.sanity_check = crc32_fast(new_location, sizeof(relocate_header));
+  hdr.sanity_check = crc32c(new_location, sizeof(relocate_header));
 
   // return total length
   return sizeof(relocate_header) + size;
@@ -208,4 +208,5 @@ static int prune_elf_symbols(char* location)
   else if (hdr->e_ident[EI_CLASS] == ELFCLASS64)
       return prune_elf64_symbols(location);
   assert(0 && "Unknown ELF class");
+  return 0;
 }

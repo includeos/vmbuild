@@ -9,8 +9,8 @@ if(NOT HAVE_FLAG_STD_CXX14)
  message(FATAL_ERROR "The provided compiler: " ${CMAKE_CXX_COMPILER} "\n does not support c++14 standard please make sure your CC and CXX points to a compiler that supports c++14")
 endif()
 
-set(SOURCES vmbuild.cpp)
-set(ELF_SYMS_SOURCES elf_syms.cpp ../src/util/crc32.cpp)
+set(SOURCES src/vmbuild.cpp)
+set(ELF_SYMS_SOURCES src/elf_syms.cpp src/crc32.cpp src/elf_binary.hpp)
 
 
 

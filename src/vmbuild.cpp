@@ -25,12 +25,12 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <cassert>
-#include <elf.h>
 
-#include "../api/boot/multiboot.h"
+#include "elf.h"
+#include "multiboot.h"
 
 #define GSL_THROW_ON_CONTRACT_VIOLATION
-#include "../api/util/elf_binary.hpp"
+#include "elf_binary.hpp"
 
 #define SECT_SIZE 512
 #define SECT_SIZE_ERR  666

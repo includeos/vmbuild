@@ -1,32 +1,14 @@
 import os
-from conans import ConanFile,tools,CMake
-import shutil
+from conans import ConanFile, python_requires, CMake
 
-def get_version():
-    git = tools.Git()
-    try:
-        prev_tag = git.run("describe --tags --abbrev=0")
-        commits_behind = int(git.run("rev-list --count %s..HEAD" % (prev_tag)))
-        # Commented out checksum due to a potential bug when downloading from bintray
-        #checksum = git.run("rev-parse --short HEAD")
-        if prev_tag.startswith("v"):
-            prev_tag = prev_tag[1:]
-        if commits_behind > 0:
-            prev_tag_split = prev_tag.split(".")
-            prev_tag_split[-1] = str(int(prev_tag_split[-1]) + 1)
-            output = "%s-%d" % (".".join(prev_tag_split), commits_behind)
-        else:
-            output = "%s" % (prev_tag)
-        return output
-    except:
-        return '0.0.0'
+conan_tools = python_requires("conan-tools/[>=1.0.0]@includeos/stable")
 
 class VmbuildConan(ConanFile):
     settings= "os_build","arch_build"
     name = "vmbuild"
     license = 'Apache-2.0'
     description = 'Utilities to build IncludeOS VMs'
-    version = get_version()
+    version = conan_tools.git_get_semver()
     generators = 'cmake'
     url = "http://github.com/includeos/vmbuild"
 
@@ -42,7 +24,7 @@ class VmbuildConan(ConanFile):
     default_channel="test"
 
     def build_requirements(self):
-        self.build_requires("GSL/2.0.0@includeos/test")
+        self.build_requires("GSL/2.0.0@includeos/stable")
 
     def _cmake_configure(self):
         cmake = CMake(self)

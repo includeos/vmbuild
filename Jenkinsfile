@@ -30,9 +30,14 @@ pipeline {
       }
     }
     stage('Upload to bintray') {
+      when {
+        allOf {
+          branch 'master'
+          not { triggeredBy 'UpstreamCause' }
+        }
+      }
       parallel {
         stage('Latest release') {
-          when { branch 'master' }
           steps {
             upload_package("$CHAN_LATEST")
           }

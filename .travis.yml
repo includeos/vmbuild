@@ -12,7 +12,7 @@ script:
   - conan create . includeos/latest -pr apple-clang-10-macos-toolchain
   - VERSION=$(conan inspect -a version . | cut -d " " -f 2)
   - |
-    if [ "$TRAVIS_BRANCH" == "master" ]; then
+    if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then
       conan upload --all vmbuild/$VERSION@includeos/latest -r includeos
     fi
     if [ -n "$TRAVIS_TAG" ]; then
@@ -20,9 +20,3 @@ script:
       conan upload --all vmbuild/$VERSION@includeos/latest -r includeos
       conan upload --all vmbuild/$VERSION@includeos/stable -r includeos
     fi
-
-notifications:
-  slack:
-    rooms:
-      - secure: "TmAT7USwYEoR7vrmv68D8qzK20zhYqWS5KImWWUVfAJDwAlO0+PzwoHwqw0a9g4b/h1bDfhJ1gV4GwgBgyWWbZMTCMExrI15VpmzkQsyvbVsLrHiS4E2A3rcDahSWa3B71iZb5vhm31ZR573vX1N4nMusUBwYX4M8n3reTFLPaGEaGWM5P9E3/hu/aRVwBrtBLvAREgA/40soOv4LSg5l6kG55KKfO8Kouy9Oq1uxDu02hcRGBGOa2woOt8zDZH//jNSD+kMQ5HGWIDkdgDpCxaAmLfWmsotOfVGD2XwHfy1CPEe7Dm4TYvhaS/2V842O+O3s8cBzqxPRr2PdQgTb0vITgkfa46w7Dxv9dH8p1oRXiLCodyGLVwRIzWM/k7tzaK6O5r1l16pqNUT8Ajv3B8gJJ8ZvRI+fLtdAXtVpX3fcsGI8DOAJpdC3gTaFgpTuZwxCu1Gb5XR4o6aR2yKVMphnov2SFlEAo3hAyl2zG9yLrWnd0oXbB6E0C+uuAMQ0fur8PJmZS0S97CzDk2xGovBsKiNekBasJVQFMGbQP78uYbhGx8YX8OkezVMeG9QSB3wBHGQyOUJ54Rpmyy3Q5W1i7mu6Y58lQ0dPPw4x3+uuwWCKux7ROjHmoqPI+WlP4je2GOn2sydaAqJHuLUrM9fuhSCfXtnSp7Kh0+5QKQ="
-    on_success: always

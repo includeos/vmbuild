@@ -30,9 +30,14 @@ pipeline {
       }
     }
     stage('Upload to bintray') {
+      when {
+        allOf {
+          branch 'master'
+          not { triggeredBy 'UpstreamCause' }
+        }
+      }
       parallel {
         stage('Latest release') {
-          when { branch 'master' }
           steps {
             upload_package("$CHAN_LATEST")
           }
@@ -41,6 +46,7 @@ pipeline {
           when { buildingTag() }
           steps {
             sh script: "conan copy --all $PACKAGE/$VERSION@$USER/$CHAN_LATEST $USER/$CHAN_STABLE", label: "Copy to stable channel"
+            upload_package("$CHAN_LATEST")
             upload_package("$CHAN_STABLE")
           }
         }

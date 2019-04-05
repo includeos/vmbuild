@@ -1,6 +1,5 @@
 pipeline {
   agent { label 'ubuntu-18.04' }
-  triggers { upstream( upstreamProjects: 'IncludeOS/IncludeOS/master, IncludeOS/IncludeOS/dev', threshold: hudson.model.Result.SUCCESS ) }
   options { checkoutToSubdirectory('src') }
   environment {
     CONAN_USER_HOME = "${env.WORKSPACE}"
@@ -30,11 +29,7 @@ pipeline {
       }
     }
     stage('Upload to bintray') {
-      when {
-        allOf {
-          branch 'master'
-          not { triggeredBy 'UpstreamCause' }
-        }
+      when { branch 'master' }
       }
       parallel {
         stage('Latest release') {
@@ -46,7 +41,6 @@ pipeline {
           when { buildingTag() }
           steps {
             sh script: "conan copy --all $PACKAGE/$VERSION@$USER/$CHAN_LATEST $USER/$CHAN_STABLE", label: "Copy to stable channel"
-            upload_package("$CHAN_LATEST")
             upload_package("$CHAN_STABLE")
           }
         }

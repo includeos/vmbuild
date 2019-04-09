@@ -30,7 +30,6 @@ pipeline {
     }
     stage('Upload to bintray') {
       when { branch 'master' }
-      }
       parallel {
         stage('Latest release') {
           steps {
